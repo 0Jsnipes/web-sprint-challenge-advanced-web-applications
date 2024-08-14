@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import PT from 'prop-types';
 
-const initialFormValues = { title: '', text: '', topic: '' };
+const initialFormValues = { title: "", text: "", topic: "" };
 
 export default function ArticleForm({ postArticle, updateArticle, setCurrentArticleId, currentArticle }) {
-  const [values, setValues] = useState({ title: '', text: '', topic: '' });
+  const [values, setValues] = useState(initialFormValues);
 
   useEffect(() => {
+    // Debugging: log when useEffect runs and the values it receives
+    console.log('useEffect triggered with currentArticle:', currentArticle);
     if (currentArticle) {
-      setValues(currentArticle); // Add currentArticle as a dependency
-    }},[currentArticle])
+      setValues({
+        title: currentArticle.title,
+        text: currentArticle.text,
+        topic: currentArticle.topic,
+      });
+    } else {
+      setValues(initialFormValues);
+    }
+  }, [currentArticle]); // Ensure currentArticle is in the dependency array
+
   const onChange = evt => {
     const { id, value } = evt.target;
     setValues({ ...values, [id]: value });
@@ -18,7 +28,7 @@ export default function ArticleForm({ postArticle, updateArticle, setCurrentArti
   const onSubmit = evt => {
     evt.preventDefault();
     if (currentArticle) {
-      updateArticle({ article_id: currentArticle.article_id, article: values });
+      updateArticle(values);
     } else {
       postArticle(values);
     }
@@ -77,4 +87,7 @@ ArticleForm.propTypes = {
     text: PT.string.isRequired,
     topic: PT.string.isRequired,
   })
-};
+}
+
+
+

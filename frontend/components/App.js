@@ -14,7 +14,10 @@ export default function App() {
   const [articles, setArticles] = useState([]);
   const [currentArticleId, setCurrentArticleId] = useState();
   const [spinnerOn, setSpinnerOn] = useState(false);
-  
+
+  const currentArticle = articles.find(article => article.article_id === currentArticleId) || null;
+  console.log('Current Article ID:', currentArticleId);
+  console.log('Current Article:', currentArticle);
 
   const navigate = useNavigate();
 
@@ -121,7 +124,15 @@ export default function App() {
     })
       .then(response => response.json())
       .then(data => {
-        setArticles(articles.map(a => (a.id === currentArticleId ? data.article : a)));
+        console.log('Update successful, response:', data);
+        
+        // Update the state with the edited article
+        setArticles(prevArticles => 
+          prevArticles.map(a => 
+            a.article_id === currentArticleId ? data.article : a
+          )
+        );
+        
         setMessage(data.message);
         setSpinnerOn(false);
         setCurrentArticleId(null); // Clear after update
@@ -131,6 +142,7 @@ export default function App() {
         setSpinnerOn(false);
       });
   };
+  
   
 
   const deleteArticle = currentArticleId => {
@@ -184,12 +196,14 @@ export default function App() {
               postArticle={postArticle} 
               setCurrentArticleId={setCurrentArticleId} 
               updateArticle={updateArticle}
+              currentArticle={currentArticle}
                />
               <Articles 
               articles={articles} 
               getArticles={getArticles} 
               deleteArticle={deleteArticle} 
               setCurrentArticleId={setCurrentArticleId}
+              
               />
             </>
           } />
